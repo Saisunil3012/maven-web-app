@@ -1,0 +1,26 @@
+pipeline{
+    agent any
+    environment {
+        PATH = "$PATH:/opt/apache-maven-3.6.3/bin"
+    }
+    stages{
+       stage('GetCode'){
+            steps{
+                git branch: 'main', credentialsId: 'f6dad8a3-84e7-45b1-9d9f-8a23cb51540e', url: 'https://github.com/Saisunil3012/maven-web-app.git'
+            }
+         }        
+       stage('Build'){
+            steps{
+                sh 'mvn clean package'
+            }
+         }
+        stage('SonarQube analysis') {
+        steps{
+        withSonarQubeEnv('Sonar-Server-7.8') { 
+        sh "mvn sonar:sonar"
+    }
+        }
+        }
+       
+    }
+}
